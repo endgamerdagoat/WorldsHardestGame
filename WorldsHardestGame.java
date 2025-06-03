@@ -1,5 +1,4 @@
 //2nd level - worlds hardest game 1, lvl 14
-//TODO: grid and centering
 
 
 import javax.swing.*;
@@ -21,7 +20,7 @@ public class WorldsHardestGame extends JPanel implements KeyListener,Runnable
     private Polygon level, level2, checker, checker2;
     private JFrame frame;
     private Thread t;
-    private boolean gameOn, right, up, down, left;
+    private boolean gameOn, right, up, down, left, pause;
     boolean[] enemyDirs, enemyDirs2;
     private Font f;
     private Color color;
@@ -37,7 +36,7 @@ public class WorldsHardestGame extends JPanel implements KeyListener,Runnable
 
         frame=new JFrame();
 
-        levelNum = 14;
+        levelNum = 1;
 
         x = 50;
         y = 150;
@@ -75,23 +74,21 @@ public class WorldsHardestGame extends JPanel implements KeyListener,Runnable
         for(int i = 0; i<enemies.length; i++)
             enemies[i] = new Rectangle(enemyX[i],enemyY[i],15,15);
 
-        xPoints = new int[]{25, 625, 625, 775, 775, 675, 675, 775, 775, 225, 225, 175, 175, 25};
+        xPoints = new int[]{25, 675, 675, 825, 825, 725, 725, 825, 825, 225, 225, 175, 175, 25};
         yPoints = new int[]{300, 300, 100, 100, 250, 250, 300, 300, 450, 450, 350, 350, 450, 450};
         level2 = new Polygon(xPoints, yPoints, xPoints.length);
-        xPoints = new int[] {175, 625, 625, 675, 675, 775, 775, 225, 225, 175};
+        xPoints = new int[] {175, 675, 675, 725, 725, 825, 825, 225, 225, 175};
         yPoints = new int[] {300, 300, 250, 250, 300, 300, 450, 450, 350, 350};
         checker2 = new Polygon(xPoints, yPoints, xPoints.length);
 
-        gridX2 = new int[] {225, 225, 275, 325, 325, 375, 425, 425, 475, 525, 525, 575, 625, 625, 675, 725, 725};
-        gridY2 = new int[] {300, 400, 350, 300, 400, 350, 300, 400, 350, 300, 400, 350, 300, 400, 350, 300, 400};
+        gridX2 = new int[] {225, 225, 275, 325, 325, 375, 425, 425, 475, 525, 525, 575, 625, 625, 675, 675, 725, 725, 775};
+        gridY2 = new int[] {300, 400, 350, 300, 400, 350, 300, 400, 350, 300, 400, 350, 300, 400, 350, 250, 300, 400, 350};
 
-        enemyX2 = new int[]{240, 430, 590};
+        enemyX2 = new int[]{245, 445, 645};
         enemyY2 = new int[]{435, 300, 435};
 
-        plusX = new int[]{350, 350, 350, 350, 328, 313, 298, 372, 387, 402, 525, 525, 525, 525, 503, 488, 473, 547, 562, 577, 700, 700, 700, 700, 678, 663, 648, 722, 737, 752};
-        plusY = new int[]{375, 395, 415, 435, 370, 355, 340, 370, 355, 340,
-                375, 395, 415, 435, 370, 355, 340, 370, 355, 340,
-                375, 395, 415, 435, 370, 355, 340, 370, 355, 340};
+        plusX = new int[]{342, 342, 342, 342, 320, 305, 290, 364, 379, 394, 540, 540, 540, 540, 518, 503, 488, 562, 577, 592, 740, 740, 740, 740, 718, 703, 688, 762, 777, 792};
+        plusY = new int[]{370, 390, 410, 430, 365, 350, 335, 365, 350, 335, 370, 390, 410, 430, 365, 350, 335, 365, 350, 335, 370, 390, 410, 430, 365, 350, 335, 365, 350, 335};
 
         originalX = new int[plusX.length];
         originalY = new int[plusY.length];
@@ -118,7 +115,7 @@ public class WorldsHardestGame extends JPanel implements KeyListener,Runnable
         frame.addKeyListener(this);
         frame.add(this);
         //the size of the frame (xWidth, yWidth)
-        frame.setSize(800,500);
+        frame.setSize(850,500);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("THE WORLD'S HARDEST GAME");
@@ -136,19 +133,19 @@ public class WorldsHardestGame extends JPanel implements KeyListener,Runnable
 
         //background
         g2d.setColor(new Color(180,180,254));
-        g2d.fillRect(0,0,800,500);
+        g2d.fillRect(0,0,850,500);
 
         //menu
 
 
         //scoreboard
         g2d.setColor(Color.BLACK);
-        g2d.fillRect(0,0,800,50);
+        g2d.fillRect(0,0,850,50);
         g2d.setColor(Color.WHITE);
         g2d.setFont(f);
         g2d.drawString("MENU",0,30);
-        g2d.drawString(levelNum+"/30",330,30);
-        g2d.drawString("Deaths: "+deaths,630,30);
+        g2d.drawString(levelNum+"/30",380,30);
+        g2d.drawString("Deaths: "+deaths,680,30);
 
 
         if(levelNum==1)
@@ -238,14 +235,44 @@ public class WorldsHardestGame extends JPanel implements KeyListener,Runnable
 
         }
 
-        //game End
 
+        if(!pause && levelNum==14)
+        {
+            g2d.setColor(Color.RED);
+            g2d.drawString("Collisions On",10,100);
+            g2d.drawString("Press P to turn off",10,130);
+        }
+
+        if(pause && levelNum==14)
+        {
+            g2d.setColor(Color.RED);
+            g2d.drawString("Collisions Off",10,100);
+            g2d.drawString("Press P to turn on",10,130);
+        }
+
+        if(!pause && levelNum==1)
+        {
+            g2d.setColor(Color.RED);
+            g2d.drawString("Collisions On",10,410);
+            g2d.drawString("Press P to turn off",10,440);
+        }
+
+        if(pause && levelNum==1)
+        {
+            g2d.setColor(Color.RED);
+            g2d.drawString("Collisions Off",10,410);
+            g2d.drawString("Press P to turn on",10,440);
+        }
+
+
+        //game End
         if(!gameOn)
         {
             g2d.setColor(Color.BLACK);
             g2d.setFont(new Font("SANS SERIF",Font.BOLD,50));
             g2d.drawString("YOU WIN!",250,250);
         }
+
 
     }
     public void run()
@@ -297,10 +324,13 @@ public class WorldsHardestGame extends JPanel implements KeyListener,Runnable
 
                         enemies[i] = new Rectangle(enemyX[i], enemyY[i], enemyDim, enemyDim);
 
-                        if (hero.intersects(enemies[i])) {
-                            x = startX;
-                            y = startY;
-                            deaths++;
+                        if(!pause)
+                        {
+                            if (hero.intersects(enemies[i])) {
+                                x = startX;
+                                y = startY;
+                                deaths++;
+                            }
                         }
                     }
                 }
@@ -342,18 +372,18 @@ public class WorldsHardestGame extends JPanel implements KeyListener,Runnable
                         if(i>=enemyX2.length)
                         {
 
-                            double centerX = 350;
-                            double centerY = 375;
+                            double centerX = 342;
+                            double centerY = 370;
 
                             if(i<=enemyX2.length+9) {
-                                centerX = 350;
+                                centerX = 342;
                                 double dx = originalX[i-enemyX2.length] - centerX;
                                 double dy = originalY[i-enemyX2.length] - centerY;
                                 plusX[i-enemyX2.length] = (int)(centerX + dx * Math.cos(theta) + dy * Math.sin(theta));
                                 plusY[i-enemyX2.length] = (int)(centerY - dx * Math.sin(theta) + dy * Math.cos(theta));
                             }
                             else if (i!=enemyX2.length && i<=enemyX2.length+19) {
-                                centerX = 525;
+                                centerX = 540;
                                 double dx = originalX[i-enemyX2.length] - centerX;
                                 double dy = originalY[i-enemyX2.length] - centerY;
                                 plusX[i - enemyX2.length] = (int)(centerX + dx * Math.cos(theta) - dy * Math.sin(theta));
@@ -361,7 +391,7 @@ public class WorldsHardestGame extends JPanel implements KeyListener,Runnable
 
                             }
                             else if(i!=enemyX2.length+19) {
-                                centerX = 700;
+                                centerX = 740;
                                 double dx = originalX[i-enemyX2.length] - centerX;
                                 double dy = originalY[i-enemyX2.length] - centerY;
                                 plusX[i-enemyX2.length] = (int)(centerX + dx * Math.cos(theta) + dy * Math.sin(theta));
@@ -370,20 +400,21 @@ public class WorldsHardestGame extends JPanel implements KeyListener,Runnable
 
 
 
-
-
                             enemies2[i] = new Rectangle(plusX[i-enemyX2.length], plusY[i-enemyX2.length], enemyDim, enemyDim);
 
                         }
 
-                        if (hero.intersects(enemies2[i])) {
-                            x2 = startX2;
-                            y2 = startY2;
-                            deaths++;
+                        if(!pause)
+                        {
+                            if (hero.intersects(enemies2[i])) {
+                                x2 = startX2;
+                                y2 = startY2;
+                                deaths++;
+                            }
                         }
                     }
 
-                    theta+=0.035;
+                    theta+=0.040;
                     theta%=2*Math.PI;
                 }
 
@@ -403,7 +434,7 @@ public class WorldsHardestGame extends JPanel implements KeyListener,Runnable
 
                 }
 
-                if(y2<=225+heroDim && levelNum==14)
+                if(y2<=255 && levelNum==14)
                 {
                     gameOn = false;
                 }
@@ -437,6 +468,9 @@ public class WorldsHardestGame extends JPanel implements KeyListener,Runnable
             left = true;
         if(ke.getKeyCode()==40 || ke.getKeyCode()==83)
             down = true;
+
+        if(ke.getKeyCode()==80)
+            pause=!pause;
 
     }
     public void keyReleased(KeyEvent ke)
