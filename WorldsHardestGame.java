@@ -126,6 +126,8 @@ public class WorldsHardestGame extends JPanel implements KeyListener,Runnable
     {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D)g;
+        RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHints(rh);
 
         //all painting (AND ONLY PAINTING) happens here!
         //Don't use this method to deal with mathematics
